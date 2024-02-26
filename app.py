@@ -16,11 +16,11 @@ app = Flask(__name__)
 # app.config['MYSQL_DATABASE_HOST'] = ''
 # mysql.init_app(app)
 
-_host = ''
-_user = ''
-_password = ''
-_db = ''
-_charset = ''
+_host = '3.37.55.65'
+_user = 'svc'
+_password = 'svc123$%^'
+_db = 'python'
+_charset = 'utf8'
 
 db = pymysql.connect(host=_host, user=_user, password=_password, db=_db, charset=_charset)
 
@@ -49,6 +49,30 @@ print(f'topics : {topics}')
 for topic in topics:
     print(f'topic : {topic[0]}')
 
+def getContents():
+    litags = ''
+    for topic in topics:
+        # litags += f'<li><a href="/read/{topic["id"]}">{topic["title"]}</a></li>'
+        litags = litags + f'<li><a href="/read/{topic[0]}/">{topic[1]}</a></li>'
+    # return 'random : <strong>'+str(random.random())+'</strong>'
+    # return 'Welcome'
+    # 작은따옴표 ''' 3개는 여러줄을 표시하기 위해서이다.
+    return litags
+
+def template(contents, content):
+    return f'''
+        <!doctype html>
+        <html>
+            <body>
+                <h1><a href="/">WEB</a></h1>
+                <ol>
+                    {contents}
+                </ol>
+                {content}
+            </body>
+        </html>
+    '''    
+
 # topics = [
 #     {'id': 1, 'title': 'HTML', 'body': 'HTML is ...'},
 #     {'id': 2, 'title': 'CSS', 'body': 'CSS is ...'},
@@ -62,26 +86,14 @@ for topic in topics:
 # 랜덤 함수를 문자로 변환해서 리턴
 @app.route('/')
 def index():
-    litags = ''
-    for topic in topics:
+    # litags = ''
+    # for topic in topics:
         # litags += f'<li><a href="/read/{topic["id"]}">{topic["title"]}</a></li>'
-        litags = litags + f'<li><a href="/read/{topic[0]}/">{topic[1]}</a></li>'
+        # litags = litags + f'<li><a href="/read/{topic[0]}/">{topic[1]}</a></li>'
     # return 'random : <strong>'+str(random.random())+'</strong>'
     # return 'Welcome'
     # 작은따옴표 ''' 3개는 여러줄을 표시하기 위해서이다.
-    return f'''
-    <!doctype html>
-    <html>
-        <body>
-            <h1><a href="/">WEB</a></h1>
-            <ol>
-                {litags}
-            </ol>
-            <h2>Welcome</h2>
-            Hello, Web
-        </body>
-    </html>
-'''
+    return template(getContents(), '<h2>Welcome</h2>Hello, WEB')
 
 @app.route('/create/')
 def create():
@@ -89,10 +101,27 @@ def create():
 
 # @app.route('/read/<int:post_id>/')
 # @app.route('/read/<path:subpath>/')
-@app.route('/read/<id>/')
+@app.route('/read/<int:id>/')
 def read(id):
-    print(id)
-    return 'Read '+id
+    # print(type(id))
+    # litags = ''
+    # for topic in topics:
+        # litags += f'<li><a href="/read/{topic["id"]}">{topic["title"]}</a></li>'
+        # litags = litags + f'<li><a href="/read/{topic[0]}/">{topic[1]}</a></li>'
+
+    title = ''
+    body = ''
+    for topic in topics:
+        if topic[0] == id:
+            title = topic[1]
+            body = topic[2]
+            break;
+            
+    # return 'random : <strong>'+str(random.random())+'</strong>'
+    # return 'Welcome'
+    # 작은따옴표 ''' 3개는 여러줄을 표시하기 위해서이다.
+    print(title, body)
+    return template(getContents(), f'<h2>{title}</h2>{body}')
 
 # if __name__ == '__main__':
 #     app.run(port=5001, debug=True)
