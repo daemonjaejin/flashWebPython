@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import random
 import pymysql
 from sqlalchemy import create_engine, Column, Integer, String, MetaData
@@ -16,23 +16,35 @@ app = Flask(__name__)
 # app.config['MYSQL_DATABASE_HOST'] = ''
 # mysql.init_app(app)
 
-_host = '3.37.55.65'
-_user = 'svc'
-_password = 'svc123$%^'
-_db = 'python'
-_charset = 'utf8'
 
-db = pymysql.connect(host=_host, user=_user, password=_password, db=_db, charset=_charset)
+def get_db():
+    _host = ''
+    _user = ''
+    _password = ''
+    _db = ''
+    _charset = ''
+    db = pymysql.connect(host=_host, user=_user, password=_password, db=_db, charset=_charset)
+    return db
 
-cursor = db.cursor()
+def get_query(conn, query):
+    cursor = conn.cursor();
+    cursor.execute(query)
+    result = cursor.fetchall()
+    cursor.close()
+    return result
 
-sql = "SELECT * FROM topics"
+def set_query(conn, query):
+    cursor = conn.cursor();
+    cursor.execute(query)
+    conn.commit()
+    print(f'cursor.rowcount : {cursor.rowcount}')
+    cursor.close()
 
-cursor.execute(sql)
+conn = get_db()
+# set_query(conn, "INSERT INTO topics (title, body) VALUES ('MySQL', 'MySQL is ...')")
+topics = get_query(conn, 'SELECT * FROM topics')
 
-topics = cursor.fetchall()
 
-cursor.close()
 
 # conn = mysql.connect()
 # cursor = conn.cursor()
@@ -100,15 +112,23 @@ def index():
 
 @app.route('/create/', methods=['GET', 'POST'])
 def create():
-    content = '''
-        <form action="/create/" method="POST">
-            <p><input type="text" name="title" placeholder="title"></p>
-            <p><textarea name="body" placeholder="body"></textarea></p>
-            <p><input type="submit" value="create"></p>
-        </form>
-    '''
-
-    return template(getContents(), content)
+    print('request.method', request.method)
+    # if request.method == 'POST':
+    #     return ''''''
+    # else:
+    #     return ''''''
+    if request.method == 'GET':
+        content = '''
+            <form action="/create/" method="POST">
+                <p><input type="text" name="title" placeholder="title"></p>
+                <p><textarea name="body" placeholder="body"></textarea></p>
+                <p><input type="submit" value="create"></p>
+            </form>
+        '''
+        return template(getContents(), content)
+    elif request.method == 'POST':
+        return 'Hello POST'
+    
 
 # @app.route('/read/<int:post_id>/')
 # @app.route('/read/<path:subpath>/')
