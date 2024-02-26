@@ -69,6 +69,9 @@ def template(contents, content):
                     {contents}
                 </ol>
                 {content}
+                <ul>
+                    <li><a href="/create/">create</a></li>
+                </ul>
             </body>
         </html>
     '''    
@@ -95,9 +98,17 @@ def index():
     # 작은따옴표 ''' 3개는 여러줄을 표시하기 위해서이다.
     return template(getContents(), '<h2>Welcome</h2>Hello, WEB')
 
-@app.route('/create/')
+@app.route('/create/', methods=['GET', 'POST'])
 def create():
-    return 'Create'
+    content = '''
+        <form action="/create/" method="POST">
+            <p><input type="text" name="title" placeholder="title"></p>
+            <p><textarea name="body" placeholder="body"></textarea></p>
+            <p><input type="submit" value="create"></p>
+        </form>
+    '''
+
+    return template(getContents(), content)
 
 # @app.route('/read/<int:post_id>/')
 # @app.route('/read/<path:subpath>/')
