@@ -23,7 +23,7 @@ def create():
 @app.route('/read/<id>/')
 def read(id):
     print(id)
-    return 'Read '+str(id)
+    return 'Read '+id
 
 # if __name__ == '__main__':
 #     app.run(port=5001, debug=True)
