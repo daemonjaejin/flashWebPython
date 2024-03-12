@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect
 import random
 import pymysql
 from sqlalchemy import create_engine, Column, Integer, String, MetaData
@@ -17,33 +17,32 @@ app = Flask(__name__)
 # mysql.init_app(app)
 
 
-def get_db():
-    _host = ''
-    _user = ''
-    _password = ''
-    _db = ''
-    _charset = ''
-    db = pymysql.connect(host=_host, user=_user, password=_password, db=_db, charset=_charset)
-    return db
+# def get_db():
+#     _host = ''
+#     _user = ''
+#     _password = ''
+#     _db = ''
+#     _charset = ''
+#     db = pymysql.connect(host=_host, user=_user, password=_password, db=_db, charset=_charset)
+#     return db
 
-def get_query(conn, query):
-    cursor = conn.cursor();
-    cursor.execute(query)
-    result = cursor.fetchall()
-    cursor.close()
-    return result
+# def get_query(conn, query):
+#     cursor = conn.cursor()
+#     cursor.execute(query)
+#     result = cursor.fetchall()
+#     cursor.close()
+#     return result
 
-def set_query(conn, query):
-    cursor = conn.cursor();
-    cursor.execute(query)
-    conn.commit()
-    print(f'cursor.rowcount : {cursor.rowcount}')
-    cursor.close()
+# def set_query(conn, query):
+#     cursor = conn.cursor();
+#     cursor.execute(query)
+#     conn.commit()
+#     print(f'cursor.rowcount : {cursor.rowcount}')
+#     cursor.close()
 
-conn = get_db()
+# conn = get_db()
 # set_query(conn, "INSERT INTO topics (title, body) VALUES ('MySQL', 'MySQL is ...')")
-topics = get_query(conn, 'SELECT * FROM topics')
-
+# topics = get_query(conn, 'SELECT * FROM topics')
 
 
 # conn = mysql.connect()
@@ -57,15 +56,15 @@ topics = get_query(conn, 'SELECT * FROM topics')
 # cursor.close()
 # conn.close()
 
-print(f'topics : {topics}')
-for topic in topics:
-    print(f'topic : {topic[0]}')
+# print(f'topics : {topics}')
+# for topic in topics:
+#     print(f'topic : {topic[0]}')
 
 def getContents():
     litags = ''
     for topic in topics:
         # litags += f'<li><a href="/read/{topic["id"]}">{topic["title"]}</a></li>'
-        litags = litags + f'<li><a href="/read/{topic[0]}/">{topic[1]}</a></li>'
+        litags = litags + f'<li><a href="/read/{topic['id']}/">{topic['title']}</a></li>'
     # return 'random : <strong>'+str(random.random())+'</strong>'
     # return 'Welcome'
     # 작은따옴표 ''' 3개는 여러줄을 표시하기 위해서이다.
@@ -88,11 +87,12 @@ def template(contents, content):
         </html>
     '''    
 
-# topics = [
-#     {'id': 1, 'title': 'HTML', 'body': 'HTML is ...'},
-#     {'id': 2, 'title': 'CSS', 'body': 'CSS is ...'},
-#     {'id': 3, 'title': 'JavaScript', 'body': 'JavaScript is ...'},
-# ]
+nextId = 4
+topics = [
+    {'id': 1, 'title': 'HTML', 'body': 'HTML is ...'},
+    {'id': 2, 'title': 'CSS', 'body': 'CSS is ...'},
+    {'id': 3, 'title': 'JavaScript', 'body': 'JavaScript is ...'},
+]
 
 # @app.route('/')
 # def hello_world():  # put application's code here
@@ -127,8 +127,14 @@ def create():
         '''
         return template(getContents(), content)
     elif request.method == 'POST':
-        return 'Hello POST'
-    
+        global nextId
+        title = request.form['title']
+        body = request.form['body']
+        newTopic = {'id': nextId, 'title': title, 'body': body}
+        topics.append(newTopic)
+        url = f'/read/{nextId}/'
+        nextId = nextId + 1
+        return redirect(url)
 
 # @app.route('/read/<int:post_id>/')
 # @app.route('/read/<path:subpath>/')
@@ -143,9 +149,9 @@ def read(id):
     title = ''
     body = ''
     for topic in topics:
-        if topic[0] == id:
-            title = topic[1]
-            body = topic[2]
+        if topic['id'] == id:
+            title = topic['title']
+            body = topic['body']
             break;
             
     # return 'random : <strong>'+str(random.random())+'</strong>'
