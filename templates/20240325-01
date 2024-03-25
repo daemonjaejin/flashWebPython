@@ -1,0 +1,127 @@
+
+def f(x):
+    if x < 500:
+        return "생수"
+    elif x < 1000:
+        return "콜라"
+    else:
+        return "사이다"
+
+print(f(500))
+print(f(1000))
+
+# 짝수가 입력되면 "짝수"라는 문자열을, 홀수가 입력되면 "홀수"라는 문자열을 반환하는 함수를 만든다.
+def a(x):
+    if x % 2 == 0:
+        return "짝수"
+    else:
+        return "홀수"
+
+# 윤년을 나타나는 수가 입력되면 "윤년"이라는 문자열을, 그러지 않은 수가 입력되면 "평년"이라는 문자열을 반환하는 함수를 만든다.
+def b(x):
+    if x % 4 == 0 and x % 100 != 0 or x % 400 == 0:
+        return "윤년"
+    else:
+        return "평년"
+
+print(a(10))
+
+print(b(2024))
+
+# 평년일 때 1, 3, 5, 7, 8, 10, 12 월은 31일, 4, 6, 9, 11월은 30일, 2월은 28일이다. 월을 나타내는 숫자를 입력하면 그 달의 날짜 수를 반환하는 함수 days1 를 만든다. 사용 예는 다음과 같다.
+
+def days1(x):
+    if x == 2:
+        return 28
+    elif x == 4 or x == 6 or x == 9 or x == 11:
+        return 30
+    else:
+        return 31
+
+print(days1(3))
+
+# 연도를 나타내는 숫자와 월을 나타내는 숫자를 입력하면 그 달의 날짜 수를 반환하는 함수 days2 를 만든다.
+
+def days2(year, month):
+    if month == 2:
+        if year % 4 == 0 and year % 100 != 0 or year % 400 == 0:
+            return 29
+        else:
+            return 28
+    elif month == 4 or month == 6 or month == 9 or month == 11:
+        return 30
+    else:
+        return 31
+
+print(days2(2024, 2))
+
+# 람다 함수
+test = lambda x: x + 1
+
+print(test(1))
+
+test2 = lambda x, y: x + y
+
+print(test2(1, 2))
+
+# del y
+
+y = 1000
+
+def ff(x):
+    y = 10 * x
+    print("y = ", y)
+    return y
+
+ff(1)
+
+print(y)
+
+# 3개의 숫자를 입력하면 “그 숫자들의 합”과 “그 숫자들을 제곱한 숫자들의 합”의 차이(큰 수에서 작을 수를 뺀 값)를 계산하는 함수 diffsum를 만든다. 큰 수에서 작은 수를 뺀 결과이므로 항상 0보다 크거나 0과 같아야 한다.
+
+def diffsum(a, b, c):
+    return abs(a + b + c - (a ** 2 + b ** 2 + c ** 2))
+
+print(diffsum(1, 2, 3))
+
+z = 3
+
+def f2(x):
+    y = z * x
+    print("y =", y)
+    print("z =", z)
+    return y
+
+f2(10)
+
+def f3(x):
+    z = 99
+    y = z * x
+    print("y =", y)
+    print("z =", z)
+    return y
+
+f3(10)
+
+print(z)
+
+def f4(x):
+    global z
+    z = 99
+    y = z * x
+    print("y =", y)
+    print("z =", z)
+    return y
+
+f4(10)
+
+print(z)
+
+# 함수 바깥에 m 이라는 전역 변수를 만들고 그 값을 0으로 놓는다.
+# 앞에서 만든 diffsum 함수를 고쳐서 diffsum 함수와 같은 값을 반환하지만 함수를 실행할 때 마다 diffsum 함수에서 계산된 값이 원래 있던 m보다 크면 m을 계산된 값으로 바꾸는 함수 diffsum2 를 만든다.
+
+m = 0
+def diffsum2(a, b, c):
+    return diffsum(a, b, c) > m and diffsum(a, b, c) or m
+
+print(diffsum2(1, 2, 3))
